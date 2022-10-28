@@ -15,12 +15,14 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-
+import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
+import FormDialog from '../components/form-modal';
 
 export interface Product {
   id : string;
@@ -56,19 +58,6 @@ function getComparator<Key extends keyof any>(
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-// function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-//   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) {
-//       return order;
-//     }
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map((el) => el[0]);
-// }
 
 interface HeadCell {
   disablePadding: boolean;
@@ -167,6 +156,16 @@ interface EnhancedTableToolbarProps {
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
 
   return (
     <Toolbar
@@ -199,17 +198,28 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         </Typography>
       )}
       {numSelected > 0 ? (
+        <>
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton >
             <DeleteIcon />
           </IconButton>
         </Tooltip>
+        <Tooltip title="Edit">
+        <IconButton onClick={handleClickOpen}>
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+      <FormDialog open={open} close={handleClose} formTitle={"Edit Product"} />
+      </>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
+        <>
+        <Tooltip title="Add Product">
+          <IconButton onClick={handleClickOpen}>
+            <AddIcon />
           </IconButton>
         </Tooltip>
+        <FormDialog open={open} close={handleClose} formTitle={"Add Product"} />
+        </>
       )}
     </Toolbar>
   );
@@ -217,6 +227,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>('asc');
+  
+  
   const [orderBy, setOrderBy] = React.useState<keyof Product>('price');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
@@ -226,7 +238,7 @@ export default function EnhancedTable() {
     {id: "", name : "", price: 0, type : "", active: ""  }]
 ;
   const [products, setProducts] = useState<Product[]>(arr);
-  // retrieving data from books.json
+  // retrieving data from Products
   useEffect(() => {
       productManagementService
           .getAllProducts()
@@ -247,9 +259,8 @@ export default function EnhancedTable() {
     )
 })
 
-// const rows = products.)
+// Functions 
 
-// console.log(rows)
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -323,8 +334,6 @@ export default function EnhancedTable() {
               rowCount={rows.length}
             />
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-              rows.sort(getComparator(order, orderBy)).slice() */}
               {rows.sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
