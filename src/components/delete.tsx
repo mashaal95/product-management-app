@@ -1,19 +1,20 @@
 import Button  from '@mui/material/Button'
 import React from 'react'
 import productManagementService from '../services/product-management-service'
+import { Product } from '../views/product-table'
 
-const DeleteBookButton = ({isbn, setBooks, books}: {isbn:any, setBooks:any, books: any}) => {
+const DeleteBookButton = ({id, setProduct, products}: {id : string, setProduct : Product[], products: Product[]}) => {
 
-    const deleteBook = (isbn: any) => {
+    const deleteProduct = (id: string) => {
         productManagementService
-            .remove(isbn)
+            .removeProduct(id)
             .then((response: any) => {
-                setBooks(books.filter((book: { isbn: any }) => book.isbn !== isbn))
+                // setProduct([products.filter((product: { id : string }) => product.id !== id)])
             })
     }
 
     return (
-        <Button onClick={() => deleteBook(isbn)}>
+        <Button onClick={() => deleteProduct(id)}>
             Delete
         </Button>
     )

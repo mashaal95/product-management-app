@@ -1,43 +1,44 @@
 import axios from 'axios'
-const baseUrl = 'http://localhost:3001/books'
+import { Product } from '../views/product-table'
+const baseUrl = 'https://localhost:5001/api/Product'
 
-// getting all the books from json file
-const getAll = () => {
+// getting all the products from the API
+const getAllProducts = () => {
     const request = axios.get(baseUrl)
-    return request.then((response: { data: any }) => response.data)
+    return request.then((response: { data: Product[] }) => response.data)
 }
 
-// get specific book
-const getBook = (isbn: any) => {
-    const request = axios.get(`${baseUrl}/${isbn}`)
-    return request.then((response: { data: any }) => response.data)
+// get specific Product 
+const getProduct = (id: string) => {
+    const request = axios.get(`${baseUrl}/${id}`)
+    return request.then((response: { data: Product }) => response.data)
 }
 
-// deleting a book
-const remove = (isbn: any) => {
-    const request = axios.delete(`${baseUrl}/${isbn}`)
+// deleting a Product
+const removeProduct = (id : string) => {
+    const request = axios.delete(`${baseUrl}/${id}`)
     return request
 }
 
-// creating a new book
-const create = (newObject: any) => {
+// creating a new Product
+const createProduct = (newObject: Product) => {
     const request = axios.post(baseUrl, newObject)
-    return request.then((response: { data: any }) => response.data)
+    return request.then((response: { data: Product }) => response.data)
 }
 
-// updating a book 
-const update = (isbn: any, newObject: any) => {
-    const request = axios.put(`${baseUrl}/${isbn}`, newObject)
-    return request.then((response: { data: any }) => response.data)
+// updating a Product 
+const updateProduct = (id: string, newObject: Product) => {
+    const request = axios.put(`${baseUrl}/${id}`, newObject)
+    return request.then((response: { data: Product }) => response.data)
 }
 
 
 const productManagementService = {
-    getAll,
-    getBook,
-    remove,
-    create,
-    update
+    getAllProducts,
+    getProduct,
+    removeProduct,
+    createProduct,
+    updateProduct
 }
 
 export default productManagementService
