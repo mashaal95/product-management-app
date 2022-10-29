@@ -1,12 +1,13 @@
 import { Route, Routes } from "react-router-dom"
-import FormPage  from "./components/form-page"
+import FormPage  from "./views/form-page"
 import Demo from "./views/product-table"
 
 export function App() {
   return (
     <Routes>
       <Route path="/" element={<Demo />} />
-      <Route path="/addOrEdit" element={<FormPage />} />
+      <Route path="/addProduct" element={<FormPage />} />
+      <Route path="/editProduct" element={<FormPage />} />
     </Routes>
   )
 }

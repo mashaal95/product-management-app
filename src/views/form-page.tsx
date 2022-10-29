@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import uuid from "react-uuid";
 import productManagementService from "../services/product-management-service";
 import { useLocation } from "react-router-dom";
-import "./styles.css";
-import { IFormProps, Product } from "./interfaces";
+import "../components/styles.css";
+import { IFormProps, Product } from "../components/interfaces";
 
 
 
@@ -102,7 +102,7 @@ const handleHomePage = () => {
       margin="dense"
       id="name"
       label="Price"
-      type="text"
+      type="number"
       fullWidth
       variant="standard"
       value = {productPrice}
@@ -114,7 +114,7 @@ const handleHomePage = () => {
       name="name"
       control={control}
       render={() =>
-      <>
+      <div>
       <FormControl sx={{ marginTop: 3 , marginBottom : 2, minWidth: 300 }} >
       <InputLabel id="simple-select-standard-label">Type</InputLabel>    
       <Select
@@ -133,11 +133,10 @@ const handleHomePage = () => {
      )}
     </Select>
     </FormControl>
-    </>}
+    </div>}
     
     />
     
-    <div></div>
 
 <Controller
       name="name"
@@ -149,10 +148,6 @@ const handleHomePage = () => {
     /> }
 
     />
- <div></div>
- <div></div>
- <div></div>
-    
     <Stack  spacing={2} direction="row" justifyContent={"flex-end"}>
       <Button style={{float: "right"}} variant="contained"  onClick={handleHomePage}>Cancel</Button>
        <Button style={{float: "right"}} variant="contained" color="success" type="submit">Save</Button>

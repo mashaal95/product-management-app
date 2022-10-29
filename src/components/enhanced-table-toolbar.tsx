@@ -24,11 +24,11 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     const navigate = useNavigate();
   
     const handleFormPage = () => {
-        navigate('/addOrEdit')
+        navigate('/addProduct')
     }
   
     const handleFormPageEdit = (product? : Product) => {
-      navigate('/addOrEdit', {
+      navigate('/editProduct', {
         state: {...product}
       });
   }

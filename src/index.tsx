@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Demo from "./views/product-table"
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import FormPage from './components/form-page';
+import { App } from './App';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,12 +11,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-
-    <Routes>
-          <Route path="/" index element={<Demo />} />
-          <Route path="/addOrEdit" element={<FormPage />} />
-        </Routes>
-
+    <App />
     </BrowserRouter>
   </React.StrictMode>
 );
