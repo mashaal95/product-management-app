@@ -215,12 +215,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <>
         <Tooltip title="Delete">
           <IconButton onClick={handleDeleteClick} >
-            <DeleteIcon />
+            <DeleteIcon fontSize='large'  color='error'/>
           </IconButton>
         </Tooltip>
         <Tooltip title="Edit">
         <IconButton onClick={handleClickOpen}>
-          <EditIcon />
+          <EditIcon fontSize='large' color='primary'/>
         </IconButton>
       </Tooltip>
       <FormDialog open = {open} close={handleClose} formTitle={"Edit Product"}  edit ={true} product = {props.selectedProduct}/>
@@ -336,7 +336,7 @@ export default function EnhancedTable() {
   
   const [selectedProduct, setSelectedProduct] = useState<Product>();
 
-  
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;

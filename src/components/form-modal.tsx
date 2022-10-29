@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { FormControlLabel, Input, Select, Switch } from "@mui/material";
+import { FormControl, FormControlLabel, Input, InputLabel, MenuItem, Select, SelectChangeEvent, Switch } from "@mui/material";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Stack } from "@mui/system";
 import productManagementService from "../services/product-management-service";
@@ -35,10 +35,16 @@ const FormDialog = (props: FormProps) => {
     const [productPrice, setProductPrice] = React.useState(props.product !== undefined ? props.product.price : 0.00 );
     const [productType, setProductType] = React.useState(props.product !== undefined ? props.product.type : "" );
 
+    const typesArray = ["Books","Electronics","Food","Furniture","Toys"]
+
     const [productActive, setProductActive] = React.useState(props.product !== undefined ? props.product.active : false );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductActive(event.target.checked);
+      };
+
+      const handleTypeChange = (event: SelectChangeEvent) => {
+        setProductType(event.target.value);
       };
 
     React.useEffect(() => {
@@ -120,21 +126,36 @@ const FormDialog = (props: FormProps) => {
         onChange={(e) => setProductPrice(Number(e.target.value))}
       />}
       />
+       
        <Controller
         name="type"
         control={control}
         
-        render={({ field }) => <TextField
-        margin="dense"
-        id="name"
+        render={() =>
+            <>
+         <FormControl sx={{ marginTop: 2 , marginBottom : 2, minWidth: 300 }} >
+        <InputLabel id="simple-select-standard-label">Type</InputLabel>    
+        <Select
+        labelId="simple-select-standard-label"
+        id="simple-select-standard"
+        value={productType ?? "Select something"}
+        onChange={handleTypeChange}
         label="Type"
-        type="text"
-        fullWidth
-        variant="standard"
-        value = {productType}
-        onChange={(e) => setProductType(e.target.value)}
-      />}
+        style={{marginRight : "100px"}}
+      >
+       <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+       {typesArray.map((type) =>
+       (<MenuItem value={type}>{type}</MenuItem>)
+       )}
+      </Select>
+      </FormControl>
+      </>}
+      
       />
+      
+      <div></div>
 
 <Controller
         name="name"
