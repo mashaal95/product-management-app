@@ -4,29 +4,16 @@ import {  Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import uuid from "react-uuid";
 import productManagementService from "../services/product-management-service";
-import { Product } from "../views/product-table";
 import { useLocation } from "react-router-dom";
-
-
 import "./styles.css";
+import { IFormProps, Product } from "./interfaces";
 
-interface FormProps {
-    open? : boolean;
-    close? : () => void;
-    formTitle? : string;
-    product? : Product;
-    name?: string;
-    price?: number;
-    type?: string;
-    active?: string;
-    edit? : boolean;
-}
 
-const FormPage = (props: FormProps) => {
-    const { control, handleSubmit } = useForm<FormProps>();
+
+const FormPage = ()  => {
+    const { control, handleSubmit } = useForm();
 
     const location = useLocation();
-    // const [exampleStateName, setExampleStateName]  = React.useState("");
 
     const [productName, setProductName] = React.useState(location.state !== null ? location.state.name : "" );
     const [productPrice, setProductPrice] = React.useState(location.state !== null ? location.state.price : 0.00 );
@@ -44,11 +31,7 @@ const FormPage = (props: FormProps) => {
         setProductType(event.target.value);
       };
 
-    React.useEffect(() => {
-        if(props.product !== undefined)
-        setProductName(props.product?.name)
-        
-}, [props.product]);
+
     
 const navigate = useNavigate();
 
@@ -57,7 +40,7 @@ const handleHomePage = () => {
 }
 
 
-  const onSubmit: SubmitHandler<FormProps> = data => {
+  const onSubmit: SubmitHandler<IFormProps> = data => {
 
     const ProductObject: Product = {
         id: uuid(),
@@ -112,7 +95,7 @@ const handleHomePage = () => {
     />}
     />
      <Controller
-      name="price"
+      name="name"
       control={control}
       render={() => <TextField
       style={{marginTop: "20px"}}
@@ -128,12 +111,11 @@ const handleHomePage = () => {
     />
      
      <Controller
-      name="type"
+      name="name"
       control={control}
-      
       render={() =>
-          <>
-       <FormControl sx={{ marginTop: 3 , marginBottom : 2, minWidth: 300 }} >
+      <>
+      <FormControl sx={{ marginTop: 3 , marginBottom : 2, minWidth: 300 }} >
       <InputLabel id="simple-select-standard-label">Type</InputLabel>    
       <Select
       labelId="simple-select-standard-label"
@@ -144,8 +126,8 @@ const handleHomePage = () => {
       style={{marginRight : "100px"}}
     >
      <MenuItem value="">
-          <em>None</em>
-        </MenuItem>
+        <em>None</em>
+      </MenuItem>
      {typesArray.map((type) =>
      (<MenuItem key = {uuid()} value={type}>{type}</MenuItem>)
      )}

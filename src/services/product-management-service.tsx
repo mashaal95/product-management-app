@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Product } from '../views/product-table'
+import { Product } from '../components/interfaces'
 const baseUrl = 'https://localhost:5001/api/Product'
 
 // getting all the products from the API

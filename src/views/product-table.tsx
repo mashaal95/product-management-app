@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -20,20 +19,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import { visuallyHidden } from '@mui/utils';
 import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
-import FormDialog from '../components/form-modal';
 import DeleteDialog from '../components/delete-dialog';
-import { AppBar, Button, Switch } from '@mui/material';
+import { Divider, Switch } from '@mui/material';
 import {  AddShoppingCart, Home } from '@mui/icons-material';
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
-import FormPage from '../components/form-page';
+import { useNavigate } from "react-router-dom";
+import { EnhancedTableProps, EnhancedTableToolbarProps, Product } from '../components/interfaces';
 
-export interface Product {
-  id : string;
-  type: string;
-  active: boolean;
-  price: number;
-  name: string;
-}
 
 
 
@@ -96,14 +87,7 @@ const headCells: readonly HeadCell[] = [
   }
 ];
 
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Product) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
+
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
@@ -155,24 +139,12 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-interface EnhancedTableToolbarProps {
-  numSelected : number;
-  selectedProduct? : Product;
-}
+
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
-  const [open, setOpen] = React.useState(false);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
 
-
-  const handleClickOpen = () => {
-  //  setRedirect(true);
-  };
- 
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleDeleteClick = () => {
     setDeleteOpen(true);
@@ -181,28 +153,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const handleDeleteClose = () => {
     setDeleteOpen(false);
   };
-
-
-  // let navigate = useNavigate(); 
-  // const routeChange = () =>{ 
-  //   let path = `add-product`; 
-  //   navigate(path);
-  // }
-
-  // const App = () => {
-  //   return (
-  //     <Routes>
-  //       {/* <Route element={<Layout />}> */}
-  //         <Route path="/add-product" element={<FormPage open={false} close={function (): void {
-  //         throw new Error('Function not implemented.');
-  //       } } formTitle={''} />} />
-  //         {/* <Route path="users" element={<Users />} /> */}
-  //       {/* </Route> */}
-  //     </Routes>
-  //   );
-  // };
-
-
 
  
   const navigate = useNavigate();
@@ -223,21 +173,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     });
 }
 
-  
-
   return (
     <>
-     
-     <Toolbar
-    // sx={{
-    //   pl: { sm: 2 },
-    //   pr: { xs: 1, sm: 4 },
-    //   ...(numSelected > 0 && {
-    //     bgcolor: (theme) =>
-    //       alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-    //   }),
-    // }}
-  >
+    <Toolbar>
     {numSelected > 0 ? (
       <Typography
         sx={{ flex: '1 1 100%' }}
@@ -253,6 +191,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         variant="h5"
         id="tableTitle"
         component="div"
+        textAlign={"center"}
       >
         Product Management System
       </Typography>
@@ -269,7 +208,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         <EditIcon fontSize='large' color='primary'/>
       </IconButton>
     </Tooltip>
-    <FormDialog open = {open} close={handleClose} formTitle={"Edit Product"}  edit ={true} product = {props.selectedProduct}/>
     <DeleteDialog open = {deleteOpen} close = {handleDeleteClose} id = {props.selectedProduct !== undefined ? props.selectedProduct.id : ""} /> 
     </>
     ) : (
@@ -283,6 +221,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       </>
     )}
   </Toolbar>
+  <Divider sx={{ borderBottomWidth: 1, bgcolor: "black" }}></Divider>
     </>
   );
 }
@@ -294,12 +233,12 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState<keyof Product>('price');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
-  // const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const arr: Product[] =[ {id: "", name : "", price: 0, type : "", active: true  }];
 
   
   const [products, setProducts] = useState<Product[]>(arr);
+
   // retrieving data from Products
   useEffect(() => {
       productManagementService
@@ -309,7 +248,6 @@ export default function EnhancedTable() {
           })
   }, [setProducts])
 
-  // console.log(products)
 
   const rows = products.map(product => {  
     return (
@@ -324,8 +262,6 @@ export default function EnhancedTable() {
 })
 
 // Functions 
-
-
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
     property: keyof Product,
@@ -347,7 +283,6 @@ export default function EnhancedTable() {
   const handleClick = (event: React.MouseEvent<unknown>,  selectedProduct : Product) => {
     const selectedIndex = selected.indexOf(selectedProduct.id);
     let newSelected: readonly string[] = [];
-    // console.log(selectedProduct)
     if(selectedProduct !== undefined)
     {
       setSelectedProduct(selectedProduct);
@@ -467,10 +402,6 @@ export default function EnhancedTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      {/* <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      /> */}
     </Box>
   );
 }
