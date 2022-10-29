@@ -4,7 +4,7 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import { FormControl, FormControlLabel, Input, InputLabel, MenuItem, Select, SelectChangeEvent, Switch } from "@mui/material";
+import { FormControl, FormControlLabel,  InputLabel, MenuItem, Select, SelectChangeEvent, Switch } from "@mui/material";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { Stack } from "@mui/system";
 import productManagementService from "../services/product-management-service";
@@ -51,7 +51,7 @@ const FormDialog = (props: FormProps) => {
         if(props.product !== undefined)
         setProductName(props.product?.name)
         
-}, []);
+}, [props.product]);
     
 
   const onSubmit: SubmitHandler<FormProps> = data => {
@@ -147,7 +147,7 @@ const FormDialog = (props: FormProps) => {
             <em>None</em>
           </MenuItem>
        {typesArray.map((type) =>
-       (<MenuItem value={type}>{type}</MenuItem>)
+       (<MenuItem key = {uuid()} value={type}>{type}</MenuItem>)
        )}
       </Select>
       </FormControl>

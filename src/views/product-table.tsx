@@ -15,7 +15,6 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { visuallyHidden } from '@mui/utils';
@@ -23,7 +22,7 @@ import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
 import FormDialog from '../components/form-modal';
 import DeleteDialog from '../components/delete-dialog';
-import { Button, Switch } from '@mui/material';
+import { Switch } from '@mui/material';
 import {  AddShoppingCart } from '@mui/icons-material';
 
 export interface Product {
@@ -138,7 +137,9 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              
+              <strong>{headCell.label}</strong>
+              
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
@@ -204,7 +205,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       ) : (
         <Typography
           sx={{ flex: '1 1 100%' }}
-          variant="h6"
+          variant="h5"
           id="tableTitle"
           component="div"
         >
