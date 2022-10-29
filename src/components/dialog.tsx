@@ -6,26 +6,18 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import productManagementService from '../services/product-management-service';
+import { DialogProps } from './interfaces';
 
-
-interface DeleteProps {
-    open: boolean;
-    close : () => void;
-    id: string;
-
-}
-
-const DeleteDialog = (props: DeleteProps) => {
+const DeleteDialog = (props: DialogProps) => {
     
-    const deleteProduct = (id : string) => {
-        productManagementService
-            .removeProduct(id)
-            .then(response => window.location.reload())
-    }
+  const deleteProduct = (id : string) => {
+      productManagementService
+          .removeProduct(id)
+          .then(() => window.location.reload())
+  }
 
   return (
-    <div>
-      
+    <>
       <Dialog
         open={props.open}
         onClose={props.close}
@@ -33,11 +25,11 @@ const DeleteDialog = (props: DeleteProps) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Delete Product?"}
+          {"Delete Product"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure that you want to delete the product?
+            {props.message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -47,7 +39,7 @@ const DeleteDialog = (props: DeleteProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 }
 export default DeleteDialog;

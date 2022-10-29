@@ -4,63 +4,19 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { visuallyHidden } from '@mui/utils';
 import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
-import DeleteDialog from '../components/delete-dialog';
-import { Divider, Switch } from '@mui/material';
-import {  AddShoppingCart, Home } from '@mui/icons-material';
-import { useNavigate } from "react-router-dom";
-import { EnhancedTableProps, EnhancedTableToolbarProps, Product } from '../components/interfaces';
+import { Switch } from '@mui/material';
+import {  HeadCell, Order, Product } from '../components/interfaces';
+import { getComparator} from '../components/functions';
+import { EnhancedTableHead } from '../components/enhanced-table-head';
+import { EnhancedTableToolbar } from '../components/enhanced-table-toolbar';
 
-
-
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key,
-): (
-  a: { [key in Key]: number | string | boolean},
-  b: { [key in Key]: number | string | boolean},
-) => number {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Product;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
+const headCells: HeadCell[] = [
   {
     id: 'name',
     numeric: false,
@@ -88,155 +44,13 @@ const headCells: readonly HeadCell[] = [
 ];
 
 
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
-  const createSortHandler =
-    (property: keyof Product) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all products',
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              
-              <strong>{headCell.label}</strong>
-              
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-  const [deleteOpen, setDeleteOpen] = React.useState(false);
-
-
-  const handleDeleteClick = () => {
-    setDeleteOpen(true);
-  };
-
-  const handleDeleteClose = () => {
-    setDeleteOpen(false);
-  };
-
- 
-  const navigate = useNavigate();
-
-  const handleFormPage = () => {
-      navigate('/addOrEdit')
-  }
-
-  const handleFormPageEdit = (product? : Product) => {
-    navigate('/addOrEdit', {
-      state: {
-        id: product?.id,
-        name: product?.name,
-        type: product?.type,
-        price: product?.price,
-        active: product?.active
-      }
-    });
-}
-
-  return (
-    <>
-    <Toolbar>
-    {numSelected > 0 ? (
-      <Typography
-        sx={{ flex: '1 1 100%' }}
-        color="inherit"
-        variant="subtitle1"
-        component="div"
-      >
-       <strong> {numSelected} selected  </strong>
-      </Typography>
-    ) : (
-      <Typography
-        sx={{ flex: '1 1 100%' }}
-        variant="h5"
-        id="tableTitle"
-        component="div"
-        textAlign={"center"}
-      >
-        Product Management System
-      </Typography>
-    )}
-    {numSelected > 0 ? (
-      <>
-      <Tooltip title="Delete">
-        <IconButton onClick={handleDeleteClick} >
-          <DeleteIcon fontSize='large'  color='error'/>
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Edit">
-      <IconButton onClick={() => handleFormPageEdit(props.selectedProduct)}>
-        <EditIcon fontSize='large' color='primary'/>
-      </IconButton>
-    </Tooltip>
-    <DeleteDialog open = {deleteOpen} close = {handleDeleteClose} id = {props.selectedProduct !== undefined ? props.selectedProduct.id : ""} /> 
-    </>
-    ) : (
-      <>
-
-      <Tooltip title="Add Product">
-        <IconButton aria-label='Add' onClick={handleFormPage }>
-          < AddShoppingCart fontSize='large' color='success' />
-        </IconButton>
-      </Tooltip>
-      </>
-    )}
-  </Toolbar>
-  <Divider sx={{ borderBottomWidth: 1, bgcolor: "black" }}></Divider>
-    </>
-  );
-}
-
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>('asc');
-
-  
   const [orderBy, setOrderBy] = React.useState<keyof Product>('price');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const arr: Product[] =[ {id: "", name : "", price: 0, type : "", active: true  }];
-
-  
   const [products, setProducts] = useState<Product[]>(arr);
 
   // retrieving data from Products
@@ -262,23 +76,14 @@ export default function EnhancedTable() {
 })
 
 // Functions 
-  const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof Product,
-  ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
+const handleRequestSort = (
+  event: React.MouseEvent<unknown>,
+  property: keyof Product,
+) => {
+  const isAsc = orderBy === property && order === 'asc';
+  setOrder(isAsc ? 'desc' : 'asc');
+  setOrderBy(property);
+};
 
   const handleClick = (event: React.MouseEvent<unknown>,  selectedProduct : Product) => {
     const selectedIndex = selected.indexOf(selectedProduct.id);
@@ -336,9 +141,9 @@ export default function EnhancedTable() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
+              headCells = {headCells}
             />
             <TableBody>
               {rows.sort(getComparator(order, orderBy))

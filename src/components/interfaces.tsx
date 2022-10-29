@@ -9,15 +9,15 @@ export interface EnhancedTableToolbarProps {
     selectedProduct? : Product;
 }
 
-type Order = 'asc' | 'desc';
+export type Order = 'asc' | 'desc';
 
 export interface EnhancedTableProps {
     numSelected: number;
     onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Product) => void;
-    onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
     order: Order;
     orderBy: string;
     rowCount: number;
+    headCells : HeadCell[]
 }
 
 export interface Product {
@@ -26,6 +26,22 @@ export interface Product {
     active: boolean;
     price: number;
     name: string;
+}
+
+
+export interface HeadCell {
+    disablePadding: boolean;
+    id: keyof Product;
+    label: string;
+    numeric: boolean;
+}
+
+export interface DialogProps {
+    open: boolean;
+    close : () => void;
+    id: string;
+    message: string;
+
 }
   
 
