@@ -286,7 +286,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.name);
+      const newSelected = rows.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -294,7 +294,7 @@ export default function EnhancedTable() {
   };
 
   const handleClick = (event: React.MouseEvent<unknown>,  selectedProduct : Product) => {
-    const selectedIndex = selected.indexOf(selectedProduct.name);
+    const selectedIndex = selected.indexOf(selectedProduct.id);
     let newSelected: readonly string[] = [];
     // console.log(selectedProduct)
     if(selectedProduct !== undefined)
@@ -303,7 +303,7 @@ export default function EnhancedTable() {
     }
     
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, selectedProduct.name);
+      newSelected = newSelected.concat(selected, selectedProduct.id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -358,7 +358,7 @@ export default function EnhancedTable() {
               {rows.sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -368,7 +368,7 @@ export default function EnhancedTable() {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
