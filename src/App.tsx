@@ -1,6 +1,6 @@
-import { Route, Routes } from "react-router-dom"
-import FormPage  from "./views/form-page"
-import Demo from "./views/product-table"
+import { Route, Routes } from "react-router-dom";
+import FormPage from "./views/form-page";
+import Demo from "./views/product-table";
 
 export function App() {
   return (
@@ -9,5 +9,5 @@ export function App() {
       <Route path="/addProduct" element={<FormPage />} />
       <Route path="/editProduct" element={<FormPage />} />
     </Routes>
-  )
+  );
 }
