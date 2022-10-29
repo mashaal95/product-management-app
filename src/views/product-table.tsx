@@ -22,9 +22,10 @@ import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
 import FormDialog from '../components/form-modal';
 import DeleteDialog from '../components/delete-dialog';
-import { Switch } from '@mui/material';
-import {  AddShoppingCart } from '@mui/icons-material';
-import { useNavigate } from "react-router-dom";
+import { AppBar, Button, Switch } from '@mui/material';
+import {  AddShoppingCart, Home } from '@mui/icons-material';
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import FormPage from '../components/form-page';
 
 export interface Product {
   id : string;
@@ -166,7 +167,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
 
   const handleClickOpen = () => {
-   routeChange()
+  //  setRedirect(true);
   };
  
   const handleClose = () => {
@@ -182,77 +183,113 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   };
 
 
-  let navigate = useNavigate(); 
-  const routeChange = () =>{ 
-    let path = `add-product`; 
-    navigate(path);
+  // let navigate = useNavigate(); 
+  // const routeChange = () =>{ 
+  //   let path = `add-product`; 
+  //   navigate(path);
+  // }
+
+  // const App = () => {
+  //   return (
+  //     <Routes>
+  //       {/* <Route element={<Layout />}> */}
+  //         <Route path="/add-product" element={<FormPage open={false} close={function (): void {
+  //         throw new Error('Function not implemented.');
+  //       } } formTitle={''} />} />
+  //         {/* <Route path="users" element={<Users />} /> */}
+  //       {/* </Route> */}
+  //     </Routes>
+  //   );
+  // };
+
+
+
+ 
+  const navigate = useNavigate();
+
+  const handleFormPage = () => {
+      navigate('/addOrEdit')
   }
+
+  const handleFormPageEdit = (product? : Product) => {
+    navigate('/addOrEdit', {
+      state: {
+        id: product?.id,
+        name: product?.name,
+        type: product?.type,
+        price: product?.price,
+        active: product?.active
+      }
+    });
+}
 
   
 
   return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-         <strong> {numSelected} selected  </strong>
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h5"
-          id="tableTitle"
-          component="div"
-        >
-          Product Management System
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <>
-        <Tooltip title="Delete">
-          <IconButton onClick={handleDeleteClick} >
-            <DeleteIcon fontSize='large'  color='error'/>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Edit">
-        <IconButton onClick={handleClickOpen}>
-          <EditIcon fontSize='large' color='primary'/>
+    <>
+     
+     <Toolbar
+    // sx={{
+    //   pl: { sm: 2 },
+    //   pr: { xs: 1, sm: 4 },
+    //   ...(numSelected > 0 && {
+    //     bgcolor: (theme) =>
+    //       alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+    //   }),
+    // }}
+  >
+    {numSelected > 0 ? (
+      <Typography
+        sx={{ flex: '1 1 100%' }}
+        color="inherit"
+        variant="subtitle1"
+        component="div"
+      >
+       <strong> {numSelected} selected  </strong>
+      </Typography>
+    ) : (
+      <Typography
+        sx={{ flex: '1 1 100%' }}
+        variant="h5"
+        id="tableTitle"
+        component="div"
+      >
+        Product Management System
+      </Typography>
+    )}
+    {numSelected > 0 ? (
+      <>
+      <Tooltip title="Delete">
+        <IconButton onClick={handleDeleteClick} >
+          <DeleteIcon fontSize='large'  color='error'/>
         </IconButton>
       </Tooltip>
-      <FormDialog open = {open} close={handleClose} formTitle={"Edit Product"}  edit ={true} product = {props.selectedProduct}/>
-      <DeleteDialog open = {deleteOpen} close = {handleDeleteClose} id = {props.selectedProduct !== undefined ? props.selectedProduct.id : ""} /> 
+      <Tooltip title="Edit">
+      <IconButton onClick={() => handleFormPageEdit(props.selectedProduct)}>
+        <EditIcon fontSize='large' color='primary'/>
+      </IconButton>
+    </Tooltip>
+    <FormDialog open = {open} close={handleClose} formTitle={"Edit Product"}  edit ={true} product = {props.selectedProduct}/>
+    <DeleteDialog open = {deleteOpen} close = {handleDeleteClose} id = {props.selectedProduct !== undefined ? props.selectedProduct.id : ""} /> 
+    </>
+    ) : (
+      <>
+
+      <Tooltip title="Add Product">
+        <IconButton aria-label='Add' onClick={handleFormPage }>
+          < AddShoppingCart fontSize='large' color='success' />
+        </IconButton>
+      </Tooltip>
       </>
-      ) : (
-        <>
-        <Tooltip title="Add Product">
-          <IconButton aria-label='Add' onClick={handleClickOpen}>
-            < AddShoppingCart fontSize='large' color='success' />
-          </IconButton>
-           {/* <Button variant='contained' color="success" onClick={handleClickOpen}>+ Add</Button> */}
-        </Tooltip>
-        <FormDialog open={open} close={handleClose} formTitle={"Add Product"} edit = {false} />
-        </>
-      )}
-    </Toolbar>
+    )}
+  </Toolbar>
+    </>
   );
 }
 
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>('asc');
-  
+
   
   const [orderBy, setOrderBy] = React.useState<keyof Product>('price');
   const [selected, setSelected] = React.useState<readonly string[]>([]);

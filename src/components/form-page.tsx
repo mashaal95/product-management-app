@@ -1,16 +1,19 @@
 import { Button, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField } from "@mui/material";
 import * as React from "react";
 import {  Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import uuid from "react-uuid";
 import productManagementService from "../services/product-management-service";
 import { Product } from "../views/product-table";
+import { useLocation } from "react-router-dom";
+
 
 import "./styles.css";
 
 interface FormProps {
-    open : boolean;
-    close : () => void;
-    formTitle : string;
+    open? : boolean;
+    close? : () => void;
+    formTitle? : string;
     product? : Product;
     name?: string;
     price?: number;
@@ -22,15 +25,16 @@ interface FormProps {
 const FormPage = (props: FormProps) => {
     const { control, handleSubmit } = useForm<FormProps>();
 
+    const location = useLocation();
     // const [exampleStateName, setExampleStateName]  = React.useState("");
 
-    const [productName, setProductName] = React.useState(props.product !== undefined ? props.product.name : "" );
-    const [productPrice, setProductPrice] = React.useState(props.product !== undefined ? props.product.price : 0.00 );
-    const [productType, setProductType] = React.useState(props.product !== undefined ? props.product.type : "" );
+    const [productName, setProductName] = React.useState(location.state !== null ? location.state.name : "" );
+    const [productPrice, setProductPrice] = React.useState(location.state !== null ? location.state.price : 0.00 );
+    const [productType, setProductType] = React.useState(location.state !== null ? location.state.type : "" );
 
     const typesArray = ["Books","Electronics","Food","Furniture","Toys"]
 
-    const [productActive, setProductActive] = React.useState(props.product !== undefined ? props.product.active : false );
+    const [productActive, setProductActive] = React.useState(location.state !== null ? location.state.active : false );
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProductActive(event.target.checked);
@@ -46,6 +50,12 @@ const FormPage = (props: FormProps) => {
         
 }, [props.product]);
     
+const navigate = useNavigate();
+
+const handleHomePage = () => {
+    navigate('/')
+}
+
 
   const onSubmit: SubmitHandler<FormProps> = data => {
 
@@ -57,11 +67,11 @@ const FormPage = (props: FormProps) => {
         active: productActive
     }
 
-    if(props.edit && props.product !== undefined)
+    if(location.state !== null)
     {
         
         const EditedProductObject: Product = {
-            id: props.product.id,
+            id: location.state.id,
             name: productName,
             price: productPrice,
             type: productType,
@@ -69,8 +79,7 @@ const FormPage = (props: FormProps) => {
         }
 
             productManagementService
-            .updateProduct(props.product.id,EditedProductObject)
-            .then(() => window.location.reload())
+            .updateProduct(location.state.id,EditedProductObject)
         
     }
     else 
@@ -80,11 +89,13 @@ const FormPage = (props: FormProps) => {
         .then(() => window.location.reload())
     }
 
-
+    navigate('/')
     
   };
 
   return (
+    <>
+    <h1 >{location.state !== null ? "Edit Product" : "Add Product" }</h1>
     <form onSubmit={handleSubmit(onSubmit)}>
     <Controller
       name="name"
@@ -103,7 +114,8 @@ const FormPage = (props: FormProps) => {
      <Controller
       name="price"
       control={control}
-      render={({ field }) => <TextField
+      render={() => <TextField
+      style={{marginTop: "20px"}}
       margin="dense"
       id="name"
       label="Price"
@@ -121,7 +133,7 @@ const FormPage = (props: FormProps) => {
       
       render={() =>
           <>
-       <FormControl sx={{ marginTop: 2 , marginBottom : 2, minWidth: 300 }} >
+       <FormControl sx={{ marginTop: 3 , marginBottom : 2, minWidth: 300 }} >
       <InputLabel id="simple-select-standard-label">Type</InputLabel>    
       <Select
       labelId="simple-select-standard-label"
@@ -151,6 +163,7 @@ const FormPage = (props: FormProps) => {
       render={() =>  <FormControlLabel
       control={<Switch checked={productActive} onChange = {handleChange} />}
       label="Active"
+      labelPlacement="start"
     /> }
 
     />
@@ -159,10 +172,11 @@ const FormPage = (props: FormProps) => {
  <div></div>
     
     <Stack  spacing={2} direction="row" justifyContent={"flex-end"}>
-      <Button style={{float: "right"}} variant="contained"  onClick={props.close}>Cancel</Button>
-       <Button style={{float: "right"}} variant="contained" color="success" type="submit" onClick={props.close}>Save</Button>
+      <Button style={{float: "right"}} variant="contained"  onClick={handleHomePage}>Cancel</Button>
+       <Button style={{float: "right"}} variant="contained" color="success" type="submit">Save</Button>
        </Stack>
   </form>
+  </>
   );
 }
 export default FormPage;

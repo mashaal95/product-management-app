@@ -1,16 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-// import App from './App';
 import Demo from "./views/product-table"
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
+import FormPage from './components/form-page';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Demo />
+    <BrowserRouter>
+
+    <Routes>
+          <Route path="/" index element={<Demo />} />
+          <Route path="/addOrEdit" element={<FormPage />} />
+        </Routes>
+
+    </BrowserRouter>
   </React.StrictMode>
 );
 
