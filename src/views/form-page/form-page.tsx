@@ -98,7 +98,7 @@ const FormPage = (props : IFormProps) => {
 
   return (
     <>
-      <h1>{location.state !== null ? "Edit Product" : "Add Product"}</h1>
+      <h2>{location.state !== null ? "Edit Product" : "Add Product"}</h2>
       <form data-testid="add-or-edit-form" onSubmit={handleSubmit(onSubmit)}>
 
       <label>Name</label>

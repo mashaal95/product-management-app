@@ -1,5 +1,4 @@
-// import React from "react";
-import { render, fireEvent, getByTestId } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import FormPage from "./form-page";
 import { IFormProps } from "../../components/interfaces";
 import { useLocation } from "react-router-dom";
@@ -53,3 +52,23 @@ test("should display a blank form", async () => {
     type: "",
   });
 });
+
+test("should allow entering a name", async () => {
+    const onNameChange = jest.fn();
+    const { findByTestId } = renderFormPage({ onNameChange });
+    const username = await findByTestId("name");
+  
+    fireEvent.change(username, { target: { value: "test" } });
+  
+    expect(onNameChange).toHaveBeenCalledWith("test");
+  });
+  
+  test("should allow entering a price", async () => {
+    const onPriceChange = jest.fn();
+    const { findByTestId } = renderFormPage({ onPriceChange });
+    const username = await findByTestId("price");
+  
+    fireEvent.change(username, { target: { value: 34 } });
+  
+    expect(onPriceChange).toHaveBeenCalledWith(34);
+  });
