@@ -35,6 +35,12 @@ const FormDialog = (props: FormProps) => {
     const [productPrice, setProductPrice] = React.useState(props.product !== undefined ? props.product.price : 0.00 );
     const [productType, setProductType] = React.useState(props.product !== undefined ? props.product.type : "" );
 
+    const [productActive, setProductActive] = React.useState(props.product !== undefined ? props.product.active : false );
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setProductActive(event.target.checked);
+      };
+
     React.useEffect(() => {
         if(props.product !== undefined)
         setProductName(props.product?.name)
@@ -43,13 +49,13 @@ const FormDialog = (props: FormProps) => {
     
 
   const onSubmit: SubmitHandler<FormProps> = data => {
-    
+
     const ProductObject: Product = {
         id: uuid(),
         name: productName,
         price: productPrice,
         type: productType,
-        active: data.active ?? ""
+        active: productActive
     }
 
     if(props.edit && props.product !== undefined)
@@ -60,7 +66,7 @@ const FormDialog = (props: FormProps) => {
             name: productName,
             price: productPrice,
             type: productType,
-            active: data.active ?? ""
+            active: productActive
         }
 
             productManagementService
@@ -133,8 +139,8 @@ const FormDialog = (props: FormProps) => {
 <Controller
         name="name"
         control={control}
-        render={({ field }) =>  <FormControlLabel
-        control={<Switch />}
+        render={() =>  <FormControlLabel
+        control={<Switch checked={productActive} onChange = {handleChange} />}
         label="Active"
       /> }
 

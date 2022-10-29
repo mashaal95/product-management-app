@@ -23,11 +23,13 @@ import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
 import FormDialog from '../components/form-modal';
 import DeleteDialog from '../components/delete-dialog';
+import { Button, Switch } from '@mui/material';
+import {  AddShoppingCart } from '@mui/icons-material';
 
 export interface Product {
   id : string;
   type: string;
-  active: string;
+  active: boolean;
   price: number;
   name: string;
 }
@@ -50,8 +52,8 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key,
 ): (
-  a: { [key in Key]: number | string},
-  b: { [key in Key]: number | string},
+  a: { [key in Key]: number | string | boolean},
+  b: { [key in Key]: number | string | boolean},
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -227,9 +229,10 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       ) : (
         <>
         <Tooltip title="Add Product">
-          <IconButton onClick={handleClickOpen}>
-            <AddIcon />
+          <IconButton aria-label='Add' onClick={handleClickOpen}>
+            < AddShoppingCart fontSize='large' color='success' />
           </IconButton>
+           {/* <Button variant='contained' color="success" onClick={handleClickOpen}>+ Add</Button> */}
         </Tooltip>
         <FormDialog open={open} close={handleClose} formTitle={"Add Product"} edit = {false} />
         </>
@@ -247,7 +250,7 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   // const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const arr: Product[] =[ {id: "", name : "", price: 0, type : "", active: ""  }];
+  const arr: Product[] =[ {id: "", name : "", price: 0, type : "", active: true  }];
 
   
   const [products, setProducts] = useState<Product[]>(arr);
@@ -259,6 +262,8 @@ export default function EnhancedTable() {
               setProducts(products)
           })
   }, [setProducts])
+
+  // console.log(products)
 
   const rows = products.map(product => {  
     return (
@@ -331,7 +336,7 @@ export default function EnhancedTable() {
   
   const [selectedProduct, setSelectedProduct] = useState<Product>();
 
- 
+  
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -389,8 +394,8 @@ export default function EnhancedTable() {
                         {row.name}
                       </TableCell>
                       <TableCell align="right">{row.price}</TableCell>
-                      <TableCell align="right">{row.type}</TableCell>
-                      <TableCell align="right">{row.active}</TableCell>
+                      <TableCell align="left">{row.type}</TableCell>
+                      <TableCell align="right"><Switch checked = {row.active} /></TableCell>
                     </TableRow>
                   );
                 })}
