@@ -1,5 +1,9 @@
 export interface IFormProps {
   name?: string;
+  onNameChange: (name: string) => void;
+  onPriceChange: (price: number) => void;
+  onTypeChange: (type: string) => void;
+
 }
 
 export interface EnhancedTableToolbarProps {
