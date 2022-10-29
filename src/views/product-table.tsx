@@ -24,6 +24,7 @@ import FormDialog from '../components/form-modal';
 import DeleteDialog from '../components/delete-dialog';
 import { Switch } from '@mui/material';
 import {  AddShoppingCart } from '@mui/icons-material';
+import { useNavigate } from "react-router-dom";
 
 export interface Product {
   id : string;
@@ -165,7 +166,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
 
   const handleClickOpen = () => {
-    setOpen(true);
+   routeChange()
   };
  
   const handleClose = () => {
@@ -179,6 +180,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const handleDeleteClose = () => {
     setDeleteOpen(false);
   };
+
+
+  let navigate = useNavigate(); 
+  const routeChange = () =>{ 
+    let path = `add-product`; 
+    navigate(path);
+  }
 
   
 
