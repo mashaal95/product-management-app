@@ -18,11 +18,11 @@ import Tooltip from '@mui/material/Tooltip';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import productManagementService from '../services/product-management-service';
 import { useEffect, useState } from 'react';
 import FormDialog from '../components/form-modal';
+import DeleteDialog from '../components/delete-dialog';
 
 export interface Product {
   id : string;
@@ -120,7 +120,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
             inputProps={{
-              'aria-label': 'select all desserts',
+              'aria-label': 'select all products',
             }}
           />
         </TableCell>
@@ -151,20 +151,32 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 }
 
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  numSelected : number;
+  selectedProduct? : Product;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
   const [open, setOpen] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
+
 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+ 
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleDeleteClick = () => {
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteClose = () => {
+    setDeleteOpen(false);
+  };
+
   
 
   return (
@@ -194,13 +206,13 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Product Management System
         </Typography>
       )}
       {numSelected > 0 ? (
         <>
         <Tooltip title="Delete">
-          <IconButton >
+          <IconButton onClick={handleDeleteClick} >
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -209,7 +221,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           <EditIcon />
         </IconButton>
       </Tooltip>
-      <FormDialog open={open} close={handleClose} formTitle={"Edit Product"} />
+      <FormDialog open = {open} close={handleClose} formTitle={"Edit Product"}  edit ={true} product = {props.selectedProduct}/>
+      <DeleteDialog open = {deleteOpen} close = {handleDeleteClose} id = {props.selectedProduct !== undefined ? props.selectedProduct.id : ""} /> 
       </>
       ) : (
         <>
@@ -218,7 +231,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             <AddIcon />
           </IconButton>
         </Tooltip>
-        <FormDialog open={open} close={handleClose} formTitle={"Add Product"} />
+        <FormDialog open={open} close={handleClose} formTitle={"Add Product"} edit = {false} />
         </>
       )}
     </Toolbar>
@@ -234,9 +247,9 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   // const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const arr: Product[] =[ 
-    {id: "", name : "", price: 0, type : "", active: ""  }]
-;
+  const arr: Product[] =[ {id: "", name : "", price: 0, type : "", active: ""  }];
+
+  
   const [products, setProducts] = useState<Product[]>(arr);
   // retrieving data from Products
   useEffect(() => {
@@ -280,12 +293,17 @@ export default function EnhancedTable() {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event: React.MouseEvent<unknown>,  selectedProduct : Product) => {
+    const selectedIndex = selected.indexOf(selectedProduct.name);
     let newSelected: readonly string[] = [];
-
+    // console.log(selectedProduct)
+    if(selectedProduct !== undefined)
+    {
+      setSelectedProduct(selectedProduct);
+    }
+    
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, selectedProduct.name);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -310,7 +328,10 @@ export default function EnhancedTable() {
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  
+  const [selectedProduct, setSelectedProduct] = useState<Product>();
 
+ 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -318,7 +339,7 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} selectedProduct = {selectedProduct} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -343,7 +364,7 @@ export default function EnhancedTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, row)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}

@@ -16,10 +16,12 @@ interface FormProps {
     open : boolean;
     close : () => void;
     formTitle : string;
+    product? : Product;
     name?: string;
     price?: number;
     type?: string;
     active?: string;
+    edit? : boolean;
 }
 
 
@@ -27,17 +29,54 @@ const FormDialog = (props: FormProps) => {
 
     const { control, handleSubmit } = useForm<FormProps>();
 
+    // const [exampleStateName, setExampleStateName]  = React.useState("");
+
+    const [productName, setProductName] = React.useState(props.product !== undefined ? props.product.name : "" );
+    const [productPrice, setProductPrice] = React.useState(props.product !== undefined ? props.product.price : 0.00 );
+    const [productType, setProductType] = React.useState(props.product !== undefined ? props.product.type : "" );
+
+    React.useEffect(() => {
+        if(props.product !== undefined)
+        setProductName(props.product?.name)
+        
+}, []);
+    
+
   const onSubmit: SubmitHandler<FormProps> = data => {
+    
     const ProductObject: Product = {
         id: uuid(),
-        name: data.name ?? "",
-        price: data.price ?? 0.0,
-        type: data.type ?? "",
+        name: productName,
+        price: productPrice,
+        type: productType,
         active: data.active ?? ""
     }
-    productManagementService
+
+    if(props.edit && props.product !== undefined)
+    {
+        
+        const EditedProductObject: Product = {
+            id: props.product.id,
+            name: productName,
+            price: productPrice,
+            type: productType,
+            active: data.active ?? ""
+        }
+
+            productManagementService
+            .updateProduct(props.product.id,EditedProductObject)
+            .then(() => window.location.reload())
+        
+    }
+    else 
+    {
+        productManagementService
         .createProduct(ProductObject)
-        .then(response => window.location.reload())
+        .then(() => window.location.reload())
+    }
+
+
+    
   };
 
   return (
@@ -50,23 +89,20 @@ const FormDialog = (props: FormProps) => {
       <Controller
         name="name"
         control={control}
-        defaultValue= {props.name}
-        render={({ field }) => <TextField
+        render={() => <TextField
         margin="dense"
         id="name"
         label="Name"
         type="text"
         fullWidth
         variant="standard"
-        defaultValue= {props.name}
-
-        {...field}
+        value = {productName}
+        onChange={(e) => setProductName(e.target.value)}
       />}
       />
        <Controller
         name="price"
         control={control}
-        defaultValue= {props.price}
         render={({ field }) => <TextField
         margin="dense"
         id="name"
@@ -74,15 +110,14 @@ const FormDialog = (props: FormProps) => {
         type="text"
         fullWidth
         variant="standard"
-        defaultValue= {props.price}
-
-        {...field}
+        value = {productPrice}
+        onChange={(e) => setProductPrice(Number(e.target.value))}
       />}
       />
        <Controller
         name="type"
         control={control}
-        defaultValue=""
+        
         render={({ field }) => <TextField
         margin="dense"
         id="name"
@@ -90,9 +125,8 @@ const FormDialog = (props: FormProps) => {
         type="text"
         fullWidth
         variant="standard"
-        defaultValue= {props.type}
-
-        {...field}
+        value = {productType}
+        onChange={(e) => setProductType(e.target.value)}
       />}
       />
 
