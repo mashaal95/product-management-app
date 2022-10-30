@@ -32,7 +32,8 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Install a Docker instance
+## Install a Docker instance for the MSSQL based DB
+You will need a MSSQL based DB for the storage of the Products. Here is the process of instantiating the DB.
 
 ```bash
 sudo docker pull mcr.microsoft.com/mssql/server:2022-latest
