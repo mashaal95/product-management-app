@@ -169,9 +169,7 @@ const FormPage = (props: IFormProps) => {
           >
             Cancel
           </Button>
-          <button data-testid = "submit"
-            type="submit" onClick={handleSubmit(onSubmit)}>Save</button>
-          {/* <Button
+          <Button
             style={{ float: "right" }}
             variant="contained"
             color="success"
@@ -179,7 +177,7 @@ const FormPage = (props: IFormProps) => {
             type="submit"
           >
             Save
-          </Button> */}
+          </Button>
         </Stack>
       </form>
     </>
