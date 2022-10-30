@@ -5,7 +5,7 @@ import {
   Switch,
 } from "@mui/material";
 import * as React from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import uuid from "react-uuid";
 import productManagementService from "../../services/product-management-service";
