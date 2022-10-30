@@ -1,4 +1,4 @@
-import { fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import FormPage from "./form-page";
 import { IFormProps } from "../../components/interfaces";
 import { useLocation } from "react-router-dom";
@@ -16,6 +16,13 @@ function renderFormPage(props: Partial<IFormProps> = {}) {
       return;
     },
 
+    onActiveChange() {
+      return;
+    },
+
+    onSubmit() {
+        return;
+    },
     name: "name",
   };
   return render(<FormPage {...defaultProps} {...props} />);
@@ -25,7 +32,7 @@ const mockUseLocationValue = {
   pathname: "/addProduct",
   search: "",
   hash: "",
-  state: { name: "", price: 0.0, type: "", active: false },
+  state: { name: "", price: undefined, type: "", active: false },
 };
 
 jest.mock("react-router", () => ({
@@ -48,27 +55,112 @@ test("should display a blank form", async () => {
   const form = await findByTestId("add-or-edit-form");
   expect(form).toHaveFormValues({
     name: "",
-    price: 0.0,
+    price: null,
     type: "",
   });
 });
 
 test("should allow entering a name", async () => {
-    const onNameChange = jest.fn();
-    const { findByTestId } = renderFormPage({ onNameChange });
-    const username = await findByTestId("name");
+  const onNameChange = jest.fn();
+  const { findByTestId } = renderFormPage({ onNameChange });
+  const name = await findByTestId("name");
+
   
-    fireEvent.change(username, { target: { value: "test" } });
+  act(() => {
+    fireEvent.change(name, { target: { value: "test" } });
+});
+
+  expect(onNameChange).toHaveBeenCalledWith("test");
+});
+
+test("should allow entering a price", async () => {
+  const onPriceChange = jest.fn();
+  const { findByTestId } = renderFormPage({ onPriceChange });
+  const price = await findByTestId("price");
+
+
+
+  act(() => {
+    fireEvent.change(price, { target: { value: 34 } });
+});
+
+  expect(onPriceChange).toHaveBeenCalledWith(34);
+});
+
+test("should allow toggling the active switch to true", async () => {
+  const onActiveChange = jest.fn();
+  const { getByRole } = renderFormPage({ onActiveChange });
+
+  // Checking for when the toggle switch is checked
+  (await getByRole("checkbox")).click();
+
+  await act(async () => {
+    fireEvent.change(await getByRole("checkbox"), {
+        target: { checked: "true" },
+      });
+});
+
+  expect(getByRole("checkbox")).toHaveProperty("checked", true);
+
+  // Checking for unchecking the toggle switch
+  (await getByRole("checkbox")).click();
+ await act(async () => {
+    fireEvent.change(await getByRole("checkbox"), {
+        target: { checked: "" },
+      });
+});
+  expect(getByRole("checkbox")).toHaveProperty("checked", false);
+});
+
+test("should allow changing a value in the type dropdown list", async () => {
+  const onTypeChange = jest.fn();
+  const { findByTestId } = renderFormPage({ onTypeChange });
+  const name = await findByTestId("type");
+
+
+
+  act(() => {
+    fireEvent.change(name, { target: { value: "Books" } });
+});
+
+
+  expect(onTypeChange).toHaveBeenCalledWith("Books");
+});
+
+// test("should submit the form with the product name, price and active value", async () => {
+//     const onSubmit = jest.fn();
+//     const onActiveChange = jest.fn();
+//     const { findByTestId, getByRole, getByText } = renderFormPage({
+//       onSubmit,
+//       onActiveChange
+//     });
+
+ 
+//     const name = await findByTestId("name");
+//     const price = await findByTestId("price");
+//     const type = await findByTestId("type");
+//     // const submit = await getByRole("input");
+//     const button = getByText(/Save/i);
+    
+
+    
+//     (await getByRole("checkbox")).click();
+//     fireEvent.change(await getByRole("checkbox"), {
+//       target: { checked: "true" },
+//     });
   
-    expect(onNameChange).toHaveBeenCalledWith("test");
-  });
+
+//     act(() => {
+//         fireEvent.change(name, { target: { value: "Chair" } });
+//         fireEvent.change(price, { target: { value: 225 } });
+//         fireEvent.change(type, { target: { value: "Furniture" } });
+//         // fireEvent.submit(submit);
+//         // fireEvent.click(button);
+//         button.simulate('click');
+//     });
+//     expect(button).
+//     // expect(submit).toHaveBeenCalled(); 
+//    expect(onSubmit).toHaveBeenCalled();
   
-  test("should allow entering a price", async () => {
-    const onPriceChange = jest.fn();
-    const { findByTestId } = renderFormPage({ onPriceChange });
-    const username = await findByTestId("price");
-  
-    fireEvent.change(username, { target: { value: 34 } });
-  
-    expect(onPriceChange).toHaveBeenCalledWith(34);
-  });
+//     // expect(onSubmit).toHaveBeenCalledWith("Chair", 225, "Furniture",true);
+//   });

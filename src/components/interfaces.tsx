@@ -3,7 +3,8 @@ export interface IFormProps {
   onNameChange: (name: string) => void;
   onPriceChange: (price: number) => void;
   onTypeChange: (type: string) => void;
-
+  onActiveChange: (active: boolean) => void;
+  onSubmit: (name: string, price: number, type: string, active: boolean) => void;
 }
 
 export interface EnhancedTableToolbarProps {

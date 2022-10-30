@@ -13,6 +13,8 @@ export function App() {
             onNameChange={(name: string) => console.log(name)}
             onPriceChange={(num: number) => console.log(num)}
             onTypeChange={(type: string) => console.log(type)}
+            onActiveChange = {(active: boolean) => console.log(active)}
+            onSubmit= {(name: string, price: number, type: string, active: boolean) => console.log(name,price,type,active)}
           />
         }
       />
@@ -23,6 +25,8 @@ export function App() {
             onNameChange={(name: string) => console.log(name)}
             onPriceChange={(num: number) => console.log(num)}
             onTypeChange={(type: string) => console.log(type)}
+            onActiveChange = {(active: boolean) => console.log(active)}
+            onSubmit= {(name: string, price: number, type: string, active: boolean) => console.log(name,price,type,active)}
           />
         }
       />
